@@ -1,9 +1,11 @@
 import express from "express";
 
 const app = express();
+
+//middleware para habilitar o envio de dados em formato JSON
 app.use(express.json());
 
-//cadastro de animais
+//cadastro de animais - simulando um banco de dados (array de animais) 
 const animais = [
   {
     id: "ID 98253",
@@ -139,14 +141,69 @@ const animais = [
   }
 ];
 
-//rota raiz GET
+// GET (ler) todos os animais
 app.get("/", (req, res) => {
   res.status(200).send("API AdotaPet em Funcionamento");
 });
 
-//rota princ. GET ANIMAIS
 app.get("/animais", (req, res) => {
   res.status(200).json(animais);
+});
+
+// GET POR ID (Usando .find)
+app.get("/animais/:id", (req, res) => {
+  const idBusca = req.params.id;
+  const animal = animais.find(a => a.id === idBusca);
+
+  if (!animal) {
+    return res.status(404).json({ mensagem: "Animal não encontrado" });
+  }
+
+  res.status(200).json(animal);
+});
+
+// POST (cadastrar novo animal)
+app.post("/animais", (req, res) => {
+  const novoAnimal = req.body;
+  animais.push(novoAnimal);
+
+  res.status(201).json({
+    mensagem: "Animal cadastrado com sucesso!",
+    animal: novoAnimal
+  });
+});
+
+// PUT (atualizar dados)
+app.put("/animais/:id", (req, res) => {
+  const animal = animais.find(a => a.id === req.params.id);
+
+  if (!animal) {
+    return res.status(404).json({ mensagem: "Animal não encontrado" });
+  }
+
+  // Atualiza as propriedades do animal encontrado
+  Object.assign(animal, req.body, { id: animal.id });
+
+  res.status(200).json({
+    mensagem: "Animal atualizado com sucesso!",
+    animal: animal
+  });
+});
+
+// DELETE (remover animal)
+app.delete("/animais/:id", (req, res) => {
+  const index = animais.findIndex(a => a.id === req.params.id);
+
+  if (index === -1) {
+    return res.status(404).json({ mensagem: "Animal não encontrado" });
+  }
+
+  const animalRemovido = animais.splice(index, 1);
+
+  res.status(200).json({
+    mensagem: "Animal removido com sucesso!",
+    animal: animalRemovido[0]
+  });
 });
 
 export default app;
