@@ -173,7 +173,7 @@ app.post("/animais", (req, res) => {
   });
 });
 
-// PUT (atualizar dados)
+// PUT (atualizar todos os dados)
 app.put("/animais/:id", (req, res) => {
   const animal = animais.find(a => a.id === req.params.id);
 
@@ -186,6 +186,23 @@ app.put("/animais/:id", (req, res) => {
 
   res.status(200).json({
     mensagem: "Animal atualizado com sucesso!",
+    animal: animal
+  });
+});
+
+// PATCH (atualização parcial dos dados)
+app.patch("/animais/:id", (req, res) => {
+  const animal = animais.find(a => a.id === req.params.id);
+
+  if (!animal) {
+    return res.status(404).json({ mensagem: "Animal não encontrado" });
+  }
+
+  // Atualiza apenas os campos enviados no body, preservando o ID original
+  Object.assign(animal, req.body, { id: animal.id });
+
+  res.status(200).json({
+    mensagem: "Animal atualizado parcialmente com sucesso!",
     animal: animal
   });
 });
