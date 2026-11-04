@@ -1,27 +1,13 @@
+//IMPORTANDO O EXPRESS PARA CRIAR O SERVIDOR 
 import express from "express";
 import type { Request, Response } from "express";
 
-// TypeScript interface para Animal
-export interface Animal {
-  id: number;
-  nome: string;
-  especie: string;
-  raca: string;
-  idade: number;
-  porte: string;
-  esquemaVacinal: string;
-  status: string;
-  idAbrigo: string;
-  idAdotante: string;
-}
 
-const app = express();
+//PARTE DO CÓDIGO EM TYPESCRIPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-//middleware para habilitar o envio de dados em formato JSON
-app.use(express.json());
+//REQUISICOES HTTP EM TYPESCRIPT (GET, POST, PUT, PATCH, DELETE) PARA CADASTRO DE ANIMAIS
 
-//REQUISICOES HTTP EM TYPESCRIPT
-// Array para armazenar os animais em typeScript --simulação de um banco de dados
+// ARRAY para armazenar os animais em typeScript --simulação de um banco de dados
 const animais: Animal[] = [
   {
     id: 1,
@@ -50,19 +36,45 @@ const animais: Animal[] = [
   }
 ]; 
 
-//cadatro por meio de requisição POST em typeScript
-const novoAnimal: Animal = {
-  id: number(id),
-  nome,
-  especie,
-  raca,
-  idade: number(idade),
-  porte,
-  esquemaVacinal,
-  status: String,
-  idAbrigo,
-  idAdotante,
-};
+// DEFINIÇÃO DE UM TIPO DE DADO PARA O ANIMAL - POIS O TYPESCRIPT É UMA LINGUAGEM TIPADA, PRECISAMOS DEFINIR O TIPO DE DADO QUE VAI SER USADO NO ARRAY DE ANIMAIS
+export interface Animal {
+  id: number;
+  nome: string;
+  especie: string;
+  raca: string;
+  idade: number;
+  porte: string;
+  esquemaVacinal: string;
+  status: string;
+  idAbrigo: string;
+  idAdotante: string;
+}
+
+// GET (ler) todos os animais em typeScript
+const app = express();
+app.get("/animais", (req: Request, res: Response) => {
+  res.status(200).json(animais);
+});
+
+// POST (cadastrar novo animal) em typeScript
+const app
+app.post("/animais", (req: Request, res: Response) => {
+  const novoAnimal: Animal = req.body;
+  animais.push(novoAnimal);
+  res.status(201).json({
+    mensagem: "Animal cadastrado com sucesso!",
+    animal: novoAnimal
+  });
+});
+
+// Criação do servidor Express em TypeScript
+const app = express();
+
+//middleware para habilitar o envio de dados em formato JSON
+app.use(express.json());
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// PARTE DO CÓDIGO EM JAVASCRIPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //cadastro de animais - simulando um banco de dados (array de animais) em javascript
 const animais = [
@@ -92,26 +104,17 @@ const animais = [
   },
 ];
 
-//funcoes
-function gerarId() {id: string | number {
-  return Math.floor(Math.random() * 1000000); // VAI GERAR UM ID ALEATORIO PARA CADA ANIMAL
-}
-
 //REQUISICOES HTTP EM JAVASCRIPT
-// GET (ler) todos os animais em typeScript
-app.get("/", (req: Request, res: Response) => {
+
+// GET (ler) todos os animais JS
+app.get("/animais", (req, res) => {
   res.status(200).send("API AdotaPet em Funcionamento");
+  if (animais.length === 0) {
+    return res.status(404).json({ mensagem: "Nenhum animal encontrado" });
+  }
 });
 
-app.get("/animais", (req: Request, res: Response) => {
-  res.status(200).json(animais);
-});
-
-// GET POR ID (Usando .find) em typeScript
-app.get("/animais/:id", (req: Request, res: Response) => {
-  const animal = animais.find(a => a.id === req.params.id);
-
-// POST (cadastrar novo animal)
+// POST (cadastrar novo animal) JS
 app.post("/animais", (req, res) => {
   const novoAnimal = req.body;
   animais.push(novoAnimal);
@@ -122,7 +125,7 @@ app.post("/animais", (req, res) => {
   });
 });
 
-// PUT (atualizar todos os dados)
+// PUT (atualizar todos os dados) JS
 app.put("/animais/:id", (req, res) => {
   const animal = animais.find(a => a.id === req.params.id);
 
@@ -139,7 +142,7 @@ app.put("/animais/:id", (req, res) => {
   });
 });
 
-// PATCH (atualização parcial dos dados)
+// PATCH (atualização parcial dos dados) JS
 app.patch("/animais/:id", (req, res) => {
   const animal = animais.find(a => a.id === req.params.id);
 
@@ -156,7 +159,7 @@ app.patch("/animais/:id", (req, res) => {
   });
 });
 
-// DELETE (remover animal)
+// DELETE (remover animal) JS
 app.delete("/animais/:id", (req, res) => {
   const index = animais.findIndex(a => a.id === req.params.id);
 
@@ -173,3 +176,6 @@ app.delete("/animais/:id", (req, res) => {
 });
 
 export default app;
+
+//function gerarId() {
+//return Math.floor(Math.random() * 1000000); } // VAI GERAR UM ID ALEATORIO PARA CADA ANIMAL
