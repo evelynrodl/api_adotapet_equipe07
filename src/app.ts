@@ -5,7 +5,7 @@ import type { Request, Response } from "express";
 const app = express();
 app.use(express.json());
 
-//PARTE DO CÓDIGO EM TYPESCRIPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//PARTE DO CÓDIGO EM TYPESCRIPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 //REQUISICOES HTTP EM TYPESCRIPT (GET, POST, PUT, PATCH, DELETE) PARA CADASTRO DE ANIMAIS
