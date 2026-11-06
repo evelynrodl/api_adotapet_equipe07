@@ -140,6 +140,12 @@ app.patch("/animais/:id", (req: Request, res: Response) => {
   if(nome !== undefined) animais[index]!.nome = nome;
   if(especie !== undefined) animais[index]!.especie = especie;
   if(raca !== undefined) animais[index]!.raca = raca;
+  if(idade !== undefined) animais[index]!.idade = idade;
+  if(porte !== undefined) animais[index]!.porte = porte;
+  if(esquemaVacinal !== undefined) animais[index]!.esquemaVacinal = esquemaVacinal;
+  if(status !== undefined) animais[index]!.status = status;
+  if(idAbrigo !== undefined) animais[index]!.idAbrigo = idAbrigo;
+  if(idAdotante !== undefined) animais[index]!.idAdotante = idAdotante;
 
   res.status(200).json({
     mensagem: "Animal atualizado com sucesso!",
