@@ -94,7 +94,7 @@ app.put("/animais/:id", (req: Request, res: Response) => {
     nome,
     especie,
     raca,
-    idade,
+     idade,
     porte,
     esquemaVacinal,
     status,
@@ -126,13 +126,29 @@ app.delete("/animais/:id", (req: Request, res: Response) => {
 });
 
 
+//Patch / diferente do PUT, que atualiza todos os dados, o PATCH atualiza apenas os dados que foram enviados no corpo da requisição / typeScript
+app.patch("/animais/:id", (req: Request, res: Response) => {
+  const index = buscaAnimal(String(req.params.id));
+
+  if(index === -1) {
+    res.status(404).json({ mensagem: "Animal não encontrado."});
+    return;
+  }
+
+  const { nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante } = req.body;
+
+  if(nome !== undefined) animais[index]!.nome = nome;
+  if(especie !== undefined) animais[index]!.especie = especie;
+  if(raca !== undefined) animais[index]!.raca = raca;
+
+  res.status(200).json({
+    mensagem: "Animal atualizado com sucesso!",
+    animal: animais[index]
+  });
+});
 
 
 //middleware para habilitar o envio de dados em formato JSON
-
-
-
-
 
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
