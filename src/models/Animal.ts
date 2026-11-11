@@ -31,11 +31,13 @@ import mongoose, {Schema, Document, type InferSchemaType} from "mongoose";
    { versionKey: false}
  );
 
- //Extraçao automatica do tipo (substituir a criaçao manual da interface)
+ //Extraçao automatica do tipo (substituir a criaçao manual da interface)//
  export type InterfaceAnimal = InferSchemaType<typeof animalSchema>;
 
- //Criaçao do model (moongose)
+ //Criaçao do model (moongose)//
  const animal = mongoose.model("animal", animalSchema);
 
  //Disponibiliza o mosulo para ser importado em outros arquivos 
  export default animal;
+
+ 

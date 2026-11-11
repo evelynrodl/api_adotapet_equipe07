@@ -1,6 +1,7 @@
 //IMPORTANDO O EXPRESS PARA CRIAR O SERVIDOR
 import express from "express";
 import type { Request, Response } from "express";
+import Animal from "./models/Animal.js";
 
 const app = express();
 app.use(express.json());
@@ -12,58 +13,65 @@ app.use(express.json());
 
 
 // ARRAY para armazenar os animais em typeScript --simulação de um banco de dados
-const Animais: Animal[] = [
-  {
-    id: 1,
-    nome: "ADÃO",
-    especie: "CANINA (CACHORRO)",
-    raca: "GOLDEN RETRIEVER",
-    idade: 8,
-    porte: "Médio",
-    esquemaVacinal: "Antirrábica, Gripe canina, Giárdia, Polivalente V8, Polivalente V10",
-    status: "Animal adotado",
-    idAbrigo: "ID 9102",
-    idAdotante: "ID488"
-  },
-
-
-  {
-    id: 2,
-    nome: "AMORA",
-    especie: "FELINA (GATA)",
-    raca: "ANGORÁ TURCO",
-    idade: 3,
-    porte: "Pequeno",
-    esquemaVacinal: "Antirrábica, Gripe felina, Polivalente V3, Polivalente V4, Polivalente V5, Vermifugação",
-    status: "Animal adotado",
-    idAbrigo: "ID 2569",
-    idAdotante: "ID486"
-  }
-];
+//const Animais: Animal[] = [
+//  {
+//    id: 1,
+//    nome: "ADÃO",
+//    especie: "CANINA (CACHORRO)",
+//    raca: "GOLDEN RETRIEVER",
+//    idade: 8,
+//    porte: "Médio",
+//    esquemaVacinal: "Antirrábica, Gripe canina, Giárdia, Polivalente V8, Polivalente V10",
+//    status: "Animal adotado",
+//    idAbrigo: "ID 9102",
+//    idAdotante: "ID488"
+//  },
+//
+//
+//  {
+//    id: 2,
+//    nome: "AMORA",
+//    especie: "FELINA (GATA)",
+//    raca: "ANGORÁ TURCO",
+//    idade: 3,
+//    porte: "Pequeno",
+//    esquemaVacinal: "Antirrábica, Gripe felina, Polivalente V3, Polivalente V4, Polivalente V5, Vermifugação",
+//    status: "Animal adotado",
+//    idAbrigo: "ID 2569",
+//    idAdotante: "ID486"
+//  }
+//];
 
 
 // DEFINIÇÃO DE UM TIPO DE DADO PARA O ANIMAL - POIS O TYPESCRIPT É UMA LINGUAGEM TIPADA, PRECISAMOS DEFINIR O TIPO DE DADO QUE VAI SER USADO NO ARRAY DE ANIMAIS
-export interface Animal {
-  id: number;
-  nome: string;
-  especie: string;
-  raca: string;
-  idade: number;
-  porte: string;
-  esquemaVacinal: string;
-  status: string;
-  idAbrigo: string;
-  idAdotante: string;
-}
+//export interface Animal {
+//  id: number;
+//  nome: string;
+//  especie: string;
+//  raca: string;
+//  idade: number;
+//  porte: string;
+//  esquemaVacinal: string;
+//  status: string;
+//  idAbrigo: string;
+//  idAdotante: string;
+//}
 
-function buscaAnimal(id: string): number {
-  return Animais.findIndex(animal => animal.id === parseInt(id));
-}
+//function buscaAnimal(id: string): number {
+//  return Animais.findIndex(animal => animal.id === parseInt(id));
+//}
 
 // GET (ler) todos os animais em typeScript
 
-app.get("/animais", (req: Request, res: Response) => {
-  res.status(200).json(Animais);
+app.get("/animais", async (req: Request, res: Response) => {
+  try{
+    const listaAnimal = await Animal.find({});
+    res.status(200).json(listaAnimais);
+  }
+  catch (error) {
+    res.status(500).json({ mensagem: "Erro ao buscar relação de animais." });
+  }
+
 });
 
 
@@ -154,7 +162,9 @@ app.patch("/animais/:id", (req: Request, res: Response) => {
 });
 
 
-//middleware para habilitar o envio de dados em formato JSON
+
+
+
 
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
