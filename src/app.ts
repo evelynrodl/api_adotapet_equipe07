@@ -1,290 +1,189 @@
-//IMPORTANDO O EXPRESS PARA CRIAR O SERVIDOR
+
+// IMPORTANDO O EXPRESS
 import express from "express";
 import type { Request, Response } from "express";
-import Animal from "./models/Animal.js";
+
+// IMPORTANDO O MODEL DO MONGOOSE
+import Animal, { type InterfaceAnimal } from "./models/Animal.js";
 
 const app = express();
+
+// CONFIGURAÇÕES DO EXPRESS
 app.use(express.json());
+app.set("json spaces", 2);
 
-//PARTE DO CÓDIGO EM TYPESCRIPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-//REQUISICOES HTTP EM TYPESCRIPT (GET, POST, PUT, PATCH, DELETE) PARA CADASTRO DE ANIMAIS
-
-
-// ARRAY para armazenar os animais em typeScript --simulação de um banco de dados
-//const Animais: Animal[] = [
-//  {
-//    id: 1,
-//    nome: "ADÃO",
-//    especie: "CANINA (CACHORRO)",
-//    raca: "GOLDEN RETRIEVER",
-//    idade: 8,
-//    porte: "Médio",
-//    esquemaVacinal: "Antirrábica, Gripe canina, Giárdia, Polivalente V8, Polivalente V10",
-//    status: "Animal adotado",
-//    idAbrigo: "ID 9102",
-//    idAdotante: "ID488"
-//  },
-//
-//
-//  {
-//    id: 2,
-//    nome: "AMORA",
-//    especie: "FELINA (GATA)",
-//    raca: "ANGORÁ TURCO",
-//    idade: 3,
-//    porte: "Pequeno",
-//    esquemaVacinal: "Antirrábica, Gripe felina, Polivalente V3, Polivalente V4, Polivalente V5, Vermifugação",
-//    status: "Animal adotado",
-//    idAbrigo: "ID 2569",
-//    idAdotante: "ID486"
-//  }
-//];
-
-
-// DEFINIÇÃO DE UM TIPO DE DADO PARA O ANIMAL - POIS O TYPESCRIPT É UMA LINGUAGEM TIPADA, PRECISAMOS DEFINIR O TIPO DE DADO QUE VAI SER USADO NO ARRAY DE ANIMAIS
-//export interface Animal {
-//  id: number;
-//  nome: string;
-//  especie: string;
-//  raca: string;
-//  idade: number;
-//  porte: string;
-//  esquemaVacinal: string;
-//  status: string;
-//  idAbrigo: string;
-//  idAdotante: string;
-//}
-
-//function buscaAnimal(id: string): number {
-//  return Animais.findIndex(animal => animal.id === parseInt(id));
-//}
-
-// GET (ler) todos os animais em typeScript
+// ==========================================
+// GET - LISTAR TODOS OS ANIMAIS
+// ==========================================
 
 app.get("/animais", async (req: Request, res: Response) => {
-  try{
+  try {
     const listaAnimal = await Animal.find({});
-    res.status(200).json(listaAnimais);
-  }
-  catch (error) {
-    res.status(500).json({ mensagem: "Erro ao buscar relação de animais." });
-  }
 
+    if (listaAnimal.length === 0) {
+      return res.status(404).json({
+        mensagem: "Nenhum animal encontrado."
+      });
+    }
+
+    return res.status(200).json(listaAnimal);
+
+  } catch (error) {
+    return res.status(500).json({
+      mensagem: "Erro ao buscar relação de animais."
+    });
+  }
 });
 
+// ==========================================
+// GET - BUSCAR UM ANIMAL PELO ID
+// ==========================================
 
-// POST (cadastrar novo animal) em typeScript
-app.post("/animais", (req: Request, res: Response) => {
-  const novoAnimal: Animal = req.body;
-  Animais.push(novoAnimal);
-  res.status(201).json({
-    mensagem: "Animal cadastrado com sucesso!",
-    animal: novoAnimal
-  });
-});
+app.get("/animais/:id", async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const { id } = req.params;
 
+    if (!Animal.db.base.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        mensagem: "ID do animal inválido."
+      });
+    }
 
-// PUT (atualizar todos os dados) em typeScript
-app.put("/animais/:id", (req: Request, res: Response) => {
-  const index = buscaAnimal(String(req.params.id));
+    const animal = await Animal.findById(id);
 
-  if(index === -1) {
-    res.status(404).json({ mensagem: "Animal não encontrado."});
-    return;
+    if (!animal) {
+      return res.status(404).json({
+        mensagem: "Animal não encontrado."
+      });
+    }
+
+    return res.status(200).json(animal);
+
+  } catch (error) {
+    return res.status(500).json({
+      mensagem: "Erro ao buscar animal."
+    });
   }
-
-  const { nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante } = req.body;
-
-  animais[index] = {
-    ...animais[index]!,
-    nome,
-    especie,
-    raca,
-     idade,
-    porte,
-    esquemaVacinal,
-    status,
-    idAbrigo,
-    idAdotante
-  };
-
-  res.status(200).json({
-    mensagem: "Animal atualizado com sucesso!",
-    animal: animais[index]
-  });
 });
 
-//DELETE (remover animal) em typeScript
-app.delete("/animais/:id", (req: Request, res: Response) => {
-  const index = buscaAnimal(String(req.params.id));
+// ==========================================
+// POST - CADASTRAR UM NOVO ANIMAL
+// ==========================================
 
-  if(index === -1) {
-    res.status(404).json({ mensagem: "Animal não encontrado."});
-    return;
+app.post("/animais", async (req: Request<{}, {}, InterfaceAnimal>, res: Response) => {
+  try {
+    const {
+      nome,
+      especie,
+      raca,
+      idade,
+      porte,
+      esquemaVacinal,
+      status,
+      idAbrigo,
+      idAdotante
+    } = req.body;
+
+    const novoAnimal = await Animal.create({
+      nome,
+      especie,
+      raca,
+      idade: Number(idade),
+      porte,
+      esquemaVacinal,
+      status,
+      idAbrigo,
+      idAdotante
+    });
+
+    return res.status(201).json({
+      mensagem: "Animal cadastrado com sucesso!",
+      animal: novoAnimal
+    });
+
+  } catch (error) {
+    return res.status(400).json({
+      mensagem: "Erro ao cadastrar animal. Verifique os dados enviados."
+    });
   }
-
-//REMOVE O ANIMAL DO ARRAY BASE (ANIMAIS) COM BASE NO ÍNDICE (ID)
-  animais.splice(index, 1);
-
-  res.status(200).json({
-    mensagem: "Animal removido com sucesso."
-  });
 });
 
+// ==========================================
+// PUT - ATUALIZAR TODOS OS DADOS DO ANIMAL
+// ==========================================
 
-//Patch / diferente do PUT, que atualiza todos os dados, o PATCH atualiza apenas os dados que foram enviados no corpo da requisição / typeScript
-app.patch("/animais/:id", (req: Request, res: Response) => {
-  const index = buscaAnimal(String(req.params.id));
+app.put("/animais/:id", async (req: Request<{ id: string }, {}, InterfaceAnimal>, res: Response) => {
+   
+  try{
+    const { id } = req.params;
 
-  if(index === -1) {
-    res.status(404).json({ mensagem: "Animal não encontrado."});
-    return;
+    const {nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante} = req.body;
+
+    const animalAtualizado = await Animal.findByIdAndUpdate(
+      {
+        nome,
+        especie,
+        raca,
+        idade: Number(idade), 
+        porte,
+        esquemaVacinal,
+        status,
+        idAbrigo,
+        idAdotante
+      },
+      {new: true}
+    );
+  
+    res.status(208).json({
+      mensagem: "Animal atualizado com sucesso!",
+      animal: animalAtualizado  
+    });
+
   }
-
-  const { nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante } = req.body;
-
-  if(nome !== undefined) animais[index]!.nome = nome;
-  if(especie !== undefined) animais[index]!.especie = especie;
-  if(raca !== undefined) animais[index]!.raca = raca;
-  if(idade !== undefined) animais[index]!.idade = idade;
-  if(porte !== undefined) animais[index]!.porte = porte;
-  if(esquemaVacinal !== undefined) animais[index]!.esquemaVacinal = esquemaVacinal;
-  if(status !== undefined) animais[index]!.status = status;
-  if(idAbrigo !== undefined) animais[index]!.idAbrigo = idAbrigo;
-  if(idAdotante !== undefined) animais[index]!.idAdotante = idAdotante;
-
-  res.status(200).json({
-    mensagem: "Animal atualizado com sucesso!",
-    animal: animais[index]
-  });
-});
-
-
-
-
-
-
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// PARTE DO CÓDIGO EM JAVASCRIPT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-//cadastro de animais - simulando um banco de dados (array de animais) em javascript
-const animais = [
-  {
-    id: "ID 98253",
-    nome: "ADÃO",
-    especie: "CANINA (CACHORRO)",
-    raca: "GOLDEN RETRIEVER",
-    idade: "8 MESES",
-    porte: "Médio",
-    esquemaVacinal: "Antirrábica, Gripe canina, Giárdia, Polivalente V8, Polivalente V10",
-    status: "Animal adotado",
-    idAbrigo: "ID 9102",
-    idAdotante: "ID488"
-  },
-  {
-    id: "ID 457903",
-    nome: "AMORA",
-    especie: "FELINA (GATA)",
-    raca: "ANGORÁ TURCO",
-    idade: "3 MESES",
-    porte: "Pequeno",
-    esquemaVacinal: "Antirrábica, Gripe felina, Polivalente V3, Polivalente V4, Polivalente V5, Vermifugação",
-    status: "Animal adotado",
-    idAbrigo: "ID 2569",
-    idAdotante: "ID486"
-  },
-];
-
-
-//REQUISICOES HTTP EM JAVASCRIPT
-
-
-// GET (ler) todos os animais JS
-app.get("/animais", (req, res) => {
-  res.status(200).send("API AdotaPet em Funcionamento");
-  if (animais.length === 0) {
-    return res.status(404).json({ mensagem: "Nenhum animal encontrado" });
+catch (error) {
+    res.status(400).json({
+      mensagem: "Erro ao atualizar animal."
+    });
   }
 });
 
 
-// POST (cadastrar novo animal) JS
-app.post("/animais", (req, res) => {
-  const novoAnimal = req.body;
-  animais.push(novoAnimal);
+// ==========================================
+// PATCH - ATUALIZAR PARCIALMENTE UM ANIMAL
+// ==========================================
 
+app.patch("/animais/:id", async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const { id } = req.params;
 
-  res.status(201).json({
-    mensagem: "Animal cadastrado com sucesso!",
-    animal: novoAnimal
-  });
-});
+    if (!Animal.db.base.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        mensagem: "ID do animal inválido."
+      });
+    }
+  }
+   
 
+// ==========================================
+// DELETE - REMOVER UM ANIMAL
+// ==========================================
 
-// PUT (atualizar todos os dados) JS
-app.put("/animais/:id", (req, res) => {
-  const animal = animais.find(a => a.id === req.params.id);
+app.delete("/animais/:id", async (req: Request<{ id: string }>, res: Response) => {
 
+    const { id } = req.params;
 
-  if (!animal) {
-    return res.status(404).json({ mensagem: "Animal não encontrado" });
+    if (!Animal.db.base.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        mensagem: "ID do animal inválido."
+      });
+
+    
+    }});
+  
   }
 
+// ==========================================
+// EXPORTANDO O APP
+// ==========================================
 
-  // Atualiza as propriedades do animal encontrado
-  Object.assign(animal, req.body, { id: animal.id });
-
-
-  res.status(200).json({
-    mensagem: "Animal atualizado com sucesso!",
-    animal: animal
-  });
-});
-
-
-// PATCH (atualização parcial dos dados) JS
-app.patch("/animais/:id", (req, res) => {
-  const animal = animais.find(a => a.id === req.params.id);
-
-
-  if (!animal) {
-    return res.status(404).json({ mensagem: "Animal não encontrado" });
-  }
-
-
-  // Atualiza apenas os campos enviados no body, preservando o ID original
-  Object.assign(animal, req.body, { id: animal.id });
-
-
-  res.status(200).json({
-    mensagem: "Animal atualizado parcialmente com sucesso!",
-    animal: animal
-  });
-});
-
-
-// DELETE (remover animal) JS
-app.delete("/animais/:id", (req, res) => {
-  const index = animais.findIndex(a => a.id === req.params.id);
-
-
-  if (index === -1) {
-    return res.status(404).json({ mensagem: "Animal não encontrado" });
-  }
-
-
-  const animalRemovido = animais.splice(index, 1);
-
-
-  res.status(200).json({
-    mensagem: "Animal removido com sucesso!",
-    animal: animalRemovido[0]
-  });
-});
-
-
-export default app;
+export default app
