@@ -157,16 +157,27 @@ catch (error) {
 // PATCH - ATUALIZAR PARCIALMENTE UM ANIMAL
 // ==========================================
 
-app.patch("/animais/:id", async (req: Request<{ id: string }>, res: Response) => {
-  try {
-    const { id } = req.params;
+app.patch("/animais/:id", async (req: Request<{ id: string },{}, InterfaceAnimal>, res: Response) => {
+ try{
+  const {id} = req.params;
 
-    if (!Animal.db.base.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        mensagem: "ID do animal inválido."
-      });
-    }
-  }
+  const animalAtualizado = await Animal.findByIdAndUpdate(
+    id,
+    {$set: req.body},
+    { returnDocument: 'after'}
+  );
+  
+  if(!animalAtualizado){
+    res.status(404).json({mensagem: "animal não encontrado!"});
+    return;
+ }
+ res.status(200).json({mensagem: "animal atualizado parcialmente com sucesso!",
+  animal: animalAtualizado,
+ });
+}catch(error){
+  res.status(500).json({mensagem: "Erro ao atualizar parcialmente o animal."})
+}
+});
    
 
 // ==========================================
@@ -185,7 +196,7 @@ app.delete("/animais/:id", async (req: Request<{ id: string }>, res: Response) =
     
     }});
   
-  }
+  
 
 // ==========================================
 // EXPORTANDO O APP
