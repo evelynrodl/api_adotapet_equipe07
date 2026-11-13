@@ -113,7 +113,7 @@ app.post("/animais", async (req: Request<{}, {}, InterfaceAnimal>, res: Response
 // ==========================================
 
 app.put("/animais/:id", async (req: Request<{ id: string }, {}, InterfaceAnimal>, res: Response) => {
-   
+    
   try{
     const { id } = req.params;
 
@@ -124,7 +124,7 @@ app.put("/animais/:id", async (req: Request<{ id: string }, {}, InterfaceAnimal>
         nome,
         especie,
         raca,
-        idade: Number(idade), 
+        idade: Number(idade),
         porte,
         esquemaVacinal,
         status,
@@ -133,10 +133,15 @@ app.put("/animais/:id", async (req: Request<{ id: string }, {}, InterfaceAnimal>
       },
       {new: true}
     );
+
+    if(!animalAtualizado){
+      res.status(404).json({mensagem: "Livro não encontrado!"});
+      return;
+    }
   
     res.status(208).json({
       mensagem: "Animal atualizado com sucesso!",
-      animal: animalAtualizado  
+      animal: animalAtualizado 
     });
 
   }
