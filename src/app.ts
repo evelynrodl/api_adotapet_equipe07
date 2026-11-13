@@ -166,7 +166,7 @@ app.patch("/animais/:id", async (req: Request<{ id: string },{}, InterfaceAnimal
     {$set: req.body},
     { returnDocument: 'after'}
   );
-  
+
   if(!animalAtualizado){
     res.status(404).json({mensagem: "animal não encontrado!"});
     return;
@@ -185,16 +185,26 @@ app.patch("/animais/:id", async (req: Request<{ id: string },{}, InterfaceAnimal
 // ==========================================
 
 app.delete("/animais/:id", async (req: Request<{ id: string }>, res: Response) => {
-
     const { id } = req.params;
 
-    if (!Animal.db.base.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        mensagem: "ID do animal inválido."
+    const animalDeletado = await Animal.findByIdAndDelete(id);
+
+    if (!animalDeletado) {
+      return res.status(404).json({
+        mensagem: "animal não encontrado!"});
+        return;
+      }
+
+      res.status(200).json({
+        mensagem: "animal removido com sucesso!",
       });
 
+    }catch(error){
+      res.status(500).json({mensagem: "Erro ao remover o animal."});
+    }
+  );
     
-    }});
+export default app
   
   
 
@@ -202,4 +212,3 @@ app.delete("/animais/:id", async (req: Request<{ id: string }>, res: Response) =
 // EXPORTANDO O APP
 // ==========================================
 
-export default app
