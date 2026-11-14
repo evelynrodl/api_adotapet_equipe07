@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.set("json spaces", 2);
 
-// ==========================================
+// ==========================================!!!!
 // GET - LISTAR TODOS OS ANIMAIS
 // ==========================================
 
@@ -35,7 +35,7 @@ app.get("/animais", async (req: Request, res: Response) => {
   }
 });
 
-// ==========================================
+// ==========================================!!!
 // GET - BUSCAR UM ANIMAL PELO ID
 // ==========================================
 
@@ -66,7 +66,7 @@ app.get("/animais/:id", async (req: Request<{ id: string }>, res: Response) => {
   }
 });
 
-// ==========================================
+// ==========================================!!!
 // POST - CADASTRAR UM NOVO ANIMAL
 // ==========================================
 
@@ -103,12 +103,12 @@ app.post("/animais", async (req: Request<{}, {}, InterfaceAnimal>, res: Response
 
   } catch (error) {
     return res.status(400).json({
-      mensagem: "Erro ao cadastrar animal. Verifique os dados enviados."
+      mensagem: "Erro ao cadastrar animal."
     });
   }
 });
 
-// ==========================================
+// ==========================================!!!
 // PUT - ATUALIZAR TODOS OS DADOS DO ANIMAL
 // ==========================================
 
@@ -120,6 +120,7 @@ app.put("/animais/:id", async (req: Request<{ id: string }, {}, InterfaceAnimal>
     const {nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante} = req.body;
 
     const animalAtualizado = await Animal.findByIdAndUpdate(
+      id,
       {
         nome,
         especie,
@@ -135,7 +136,7 @@ app.put("/animais/:id", async (req: Request<{ id: string }, {}, InterfaceAnimal>
     );
 
     if(!animalAtualizado){
-      res.status(404).json({mensagem: "Livro não encontrado!"});
+      res.status(404).json({mensagem: "Animal não encontrado!"});
       return;
     }
   
@@ -153,7 +154,7 @@ catch (error) {
 });
 
 
-// ==========================================
+// ==========================================!!!
 // PATCH - ATUALIZAR PARCIALMENTE UM ANIMAL
 // ==========================================
 
@@ -180,7 +181,7 @@ app.patch("/animais/:id", async (req: Request<{ id: string },{}, InterfaceAnimal
 });
    
 
-// ==========================================
+// ==========================================!!!
 // DELETE - REMOVER UM ANIMAL
 // ==========================================
 
@@ -199,16 +200,14 @@ app.delete("/animais/:id", async (req: Request<{ id: string }>, res: Response) =
         mensagem: "animal removido com sucesso!",
       });
 
-    }catch(error){
+    try {
+      // Código para remover o animal
+    } catch (error) {
       res.status(500).json({mensagem: "Erro ao remover o animal."});
     }
-  );
-    
+});
+
+// ==========================================!!!
+//EXPORTANDO O APP PARA SER USADO EM OUTROS ARQUIVOS
+// ==========================================
 export default app
-  
-  
-
-// ==========================================
-// EXPORTANDO O APP
-// ==========================================
-
