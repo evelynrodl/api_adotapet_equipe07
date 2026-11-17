@@ -16,6 +16,7 @@ class AnimalController{
 }
 
 //GET - BUSCAR UM ANIMAL ESPECIFICO PELO ID -REQ PARAMS
+
     static async buscarPorId (req: Request<{ id: string }>, res:Response){
     try{
         const { id } = req.params;
@@ -32,6 +33,41 @@ class AnimalController{
         res.status(500).json({mensagem: "Erro ao buscar animal por ID."})
     }
 }
+
+        ///GET - FILTRAR ANIMAIS POR CRITÉRIOS OPCIONAIS -
+    static async buscarPorFiltro (req:Request, res:Response){
+        try{
+            //Extrair os possíveis filtros enviados após o "?" na URL
+            const{ raca, especie, porte, esquemaVacinal } = req.query;
+
+            //Criar um objeto vazio para receber apenas os filtros preenchidos
+            const filtro: Record<string, any> = {};
+
+            if(raca){
+                filtro.raca = String(raca); //Busca exata
+            }
+
+            if(especie){
+                filtro.especie = String(especie); //Busca exata
+            }
+
+            if(porte){
+                filtro.porte = { $regex: String(porte), $options:"i"}
+            }
+            //$regex: busca parcial (ex: "Machado", encontra "Machado de Assis...")
+
+            if(esquemaVacinal){
+                filtro.esquemaVacinal = { $regex: String(esquemaVacinal), $options:"i"}
+            }
+
+            const animaisFiltrados = await Animal.find(filtro);
+
+            res.status(200).json(animaisFiltrados);
+
+        }catch (error){
+            res.status(500).json({mensagem:"Erro ao filtrar animais."})
+        }
+    }
 
     //POST - CADASTRAR UM NOVO LIVRO
 
