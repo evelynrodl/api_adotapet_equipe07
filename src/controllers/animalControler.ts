@@ -20,6 +20,8 @@ class AnimalController{
             static async cadastrar (req: Request<{}, {}, InterfaceAnimal>, res: Response){
 
                 try {
+                
+                    
     const {
     nome,
     especie,
@@ -29,7 +31,8 @@ class AnimalController{
     esquemaVacinal,
     status,
     idAbrigo,
-    idAdotante
+    idAdotante,
+    capa
     } = req.body;
 
     const novoAnimal = await Animal.create({
@@ -41,7 +44,8 @@ class AnimalController{
     esquemaVacinal,
     status,
     idAbrigo,
-    idAdotante
+    idAdotante,
+    capa
     });
 
     return res.status(201).json({
@@ -64,7 +68,7 @@ class AnimalController{
             try{
     const { id } = req.params;
 
-    const {nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante} = req.body;
+    const {nome, especie, raca, idade, porte, esquemaVacinal, status, idAbrigo, idAdotante, capa} = req.body;
 
     const animalAtualizado = await Animal.findByIdAndUpdate(
     id,
@@ -77,7 +81,8 @@ class AnimalController{
         esquemaVacinal,
         status,
         idAbrigo,
-        idAdotante
+        idAdotante,
+        capa
     },
     {new: true}
     );
