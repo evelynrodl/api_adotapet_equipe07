@@ -30,4 +30,5 @@ router.patch("/animais/:id", AnimalController.atualizarParcial);
 
 router.delete("/animais/:id", AnimalController.deletar);
 
+
 export default router;
