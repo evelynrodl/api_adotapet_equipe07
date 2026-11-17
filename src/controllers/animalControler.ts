@@ -15,13 +15,31 @@ class AnimalController{
         
 }
 
+//GET - BUSCAR UM ANIMAL ESPECIFICO PELO ID -REQ PARAMS
+    static async buscarPorId (req: Request<{ id: string }>, res:Response){
+    try{
+        const { id } = req.params;
+        const animalEncontrado = await Animal.findById(id);
+
+        if(!animalEncontrado){
+            res.status(404).json({mensagem: "Animal não encontrado."})
+            return;
+        }
+
+        res.status(200).json(animalEncontrado);
+
+    }catch (error){
+        res.status(500).json({mensagem: "Erro ao buscar animal por ID."})
+    }
+}
+
     //POST - CADASTRAR UM NOVO LIVRO
 
             static async cadastrar (req: Request<{}, {}, InterfaceAnimal>, res: Response){
 
                 try {
                 
-                    
+                
     const {
     nome,
     especie,
