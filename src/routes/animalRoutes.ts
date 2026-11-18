@@ -17,7 +17,7 @@ router.get("/animais/:id", AnimalController.buscarPorId);
 
 //3º  - ROTAS DE ESCRITA E REMOÇÃO (ESTÁTICAS E DINÂMICAS)
 router.post("/animais", AnimalController.cadastrar);
-router.put("animais/:id", AnimalController.atualizar)
+router.put("/animais/:id", AnimalController.atualizar)
 router.patch("/animais/:id", AnimalController.atualizarParcial)
 router.delete("/animais/:id", AnimalController.deletar);
 

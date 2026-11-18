@@ -36,7 +36,7 @@ const animalSchema = new Schema (
 export type InterfaceAnimal = InferSchemaType<typeof animalSchema>;
 
  //Criaçao do model (moongose)//
-const animal = mongoose.model("animal", animalSchema);
+const animal = mongoose.model("pet", animalSchema);
 
  //Disponibiliza o mosulo para ser importado em outros arquivos
 export default animal;
