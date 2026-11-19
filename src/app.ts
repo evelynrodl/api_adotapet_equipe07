@@ -1,8 +1,9 @@
-
 // IMPORTANDO O EXPRESS
 import express from "express";
 import type { Request, Response } from "express";
-import animalRoutes from "./routes/animalRoutes.js"
+import animalRoutes from "./routes/animalRoutes.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocument } from "./docs/swagger.js";
 
 const app = express();
 
@@ -10,9 +11,12 @@ const app = express();
 app.use(express.json());
 app.set("json spaces", 2);
 
+//ROTA DA DOCUMENTAÇÃO INTERATIVA (SWAGGER)
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 //ROTA BASE
-app.get("/animais", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
 });
 
 
