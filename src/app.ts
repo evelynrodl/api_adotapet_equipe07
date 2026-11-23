@@ -5,6 +5,7 @@ import animalRoutes from "./routes/animalRoutes.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocument } from "./docs/swagger.js";
 
+
 const app = express();
 
 // MIDDLEWARE
