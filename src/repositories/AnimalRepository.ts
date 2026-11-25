@@ -29,3 +29,4 @@ export interface AnimalRepository{
     deletar(id: string): Promise<boolean>;
 
 }
+
