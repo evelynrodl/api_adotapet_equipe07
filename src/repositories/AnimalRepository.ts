@@ -24,7 +24,7 @@ export interface AnimalRepository{
     buscarPorId(id: string): Promise<AnimalDTO[] | null>;
     buscarPorFiltro(filtros: FiltroAnimalDTO): Promise<AnimalDTO[]>;
     cadastrar(dados: AnimalDTO): Promise<AnimalDTO>;
-    atualizar(id: string, dados: AnimalDTO): Promise<AnimalDTO>;
+    atualizar(id: string, dados: AnimalDTO): Promise<AnimalDTO | null>;
     atualizarParcial(id: string, dados:Partial<AnimalDTO>): Promise<AnimalDTO | null>;
     deletar(id: string): Promise<boolean>;
 

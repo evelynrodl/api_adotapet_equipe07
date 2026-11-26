@@ -1,14 +1,21 @@
 import type { Request, Response } from "express";
 import Animal, { type InterfaceAnimal } from "../models/Animal.js";
+import type {AnimalRepository, AnimalDTO, FiltroAnimalDTO} from "../repositories/AnimalRepository.js"
 
 class AnimalController {
 
-    // GET - LISTAR TODOS OS ANIMAIS
-    static async listar(req: Request, res: Response) {
-        try {
-            const listaAnimal = await Animal.find({});
+    private AnimalRepository: AnimalRepository;
 
-            return res.status(200).json(listaAnimal);
+    constructor(AnimalRepository: AnimalRepository){
+        this.AnimalRepository = AnimalRepository;
+    }
+
+    // GET - LISTAR TODOS OS ANIMAIS
+     async listar(req: Request, res: Response) {
+        try {
+        const listaAnimal = await this.AnimalRepository.listar();
+           
+            res.status(200).json(listaAnimal);
 
         } catch (error) {
             return res.status(500).json({
@@ -19,12 +26,13 @@ class AnimalController {
 
 
     // GET - BUSCAR UM ANIMAL PELO ID
-    static async buscarPorId(
+    async buscarPorId(
         req: Request<{ id: string }>,
         res: Response
     ) {
         try {
             const { id } = req.params;
+            const AnimalEncontrado = await this.AnimalRepository.buscarPorId(id);
 
             // Verificar se o ID possui formato válido
             if (!/^[0-9a-fA-F]{24}$/.test(id)) {
@@ -33,15 +41,13 @@ class AnimalController {
                 });
             }
 
-            const animalEncontrado = await Animal.findById(id);
-
-            if (!animalEncontrado) {
+            if (!AnimalEncontrado) {
                 return res.status(404).json({
                     mensagem: "Animal não encontrado."
                 });
             }
 
-            return res.status(200).json(animalEncontrado);
+            return res.status(200).json(AnimalEncontrado);
 
         } catch (error) {
             return res.status(500).json({
@@ -98,36 +104,12 @@ class AnimalController {
 
 
     // POST - CADASTRAR UM NOVO ANIMAL
-    static async cadastrar(
+     async cadastrar(
         req: Request<{}, {}, InterfaceAnimal>,
         res: Response
     ) {
         try {
-            const {
-                nome,
-                especie,
-                raca,
-                idade,
-                porte,
-                esquemaVacinal,
-                status,
-                idAbrigo,
-                idAdotante,
-                capa
-            } = req.body;
-
-            const novoAnimal = await Animal.create({
-                nome,
-                especie,
-                raca,
-                idade: Number(idade),
-                porte,
-                esquemaVacinal,
-                status,
-                idAbrigo,
-                idAdotante,
-                capa
-            });
+            const novoAnimal = await this.AnimalRepository.cadastrar(req.body);
 
             return res.status(201).json({
                 mensagem: "Animal cadastrado com sucesso!",
@@ -143,53 +125,16 @@ class AnimalController {
 
 
     // PUT - ATUALIZAR UM ANIMAL COMPLETAMENTE
-    static async atualizar(
+     async atualizar(
         req: Request<{ id: string }, {}, InterfaceAnimal>,
         res: Response
     ) {
         try {
             const { id } = req.params;
 
-            if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-                return res.status(400).json({
-                    mensagem: "ID do animal inválido."
-                });
-            }
-
-            const {
-                nome,
-                especie,
-                raca,
-                idade,
-                porte,
-                esquemaVacinal,
-                status,
-                idAbrigo,
-                idAdotante,
-                capa
-            } = req.body;
-
-            const animalAtualizado = await Animal.findByIdAndUpdate(
-                id,
-                {
-                    nome,
-                    especie,
-                    raca,
-                    idade: Number(idade),
-                    porte,
-                    esquemaVacinal,
-                    status,
-                    idAbrigo,
-                    idAdotante,
-                    capa
-                },
-                {
-                    new: true,
-                    runValidators: true
-                }
-            );
-
-            if (!animalAtualizado) {
+            const AnimalAtualizado = await this.AnimalRepository.atualizar(id, req.body);
+        
+            if (!AnimalAtualizado) {
                 return res.status(404).json({
                     mensagem: "Animal não encontrado!"
                 });
@@ -197,7 +142,7 @@ class AnimalController {
 
             return res.status(200).json({
                 mensagem: "Animal atualizado com sucesso!",
-                animal: animalAtualizado
+                animal: AnimalAtualizado
             });
 
         } catch (error) {
@@ -209,7 +154,7 @@ class AnimalController {
 
 
     // PATCH - ATUALIZAR UM ANIMAL PARCIALMENTE
-    static async atualizarParcial(
+    async atualizarParcial(
         req: Request<{ id: string }>,
         res: Response
     ) {
@@ -222,15 +167,8 @@ class AnimalController {
                 });
             }
 
-            const animalAtualizado = await Animal.findByIdAndUpdate(
-                id,
-                { $set: req.body },
-                {
-                    new: true,
-                    runValidators: true
-                }
-            );
-
+            
+            const animalAtualizado = await this.AnimalRepository.atualizarParcial(id, req.body)
             if (!animalAtualizado) {
                 return res.status(404).json({
                     mensagem: "Animal não encontrado!"
@@ -251,22 +189,16 @@ class AnimalController {
 
 
     // DELETE - REMOVER UM ANIMAL
-    static async deletar(
+     async deletar(
         req: Request<{ id: string }>,
         res: Response
     ) {
         try {
             const { id } = req.params;
 
-            if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-                return res.status(400).json({
-                    mensagem: "ID do animal inválido."
-                });
-            }
+            const AnimalDeletado = await this.AnimalRepository.deletar(id);
 
-            const animalDeletado = await Animal.findByIdAndDelete(id);
-
-            if (!animalDeletado) {
+            if (!AnimalDeletado) {
                 return res.status(404).json({
                     mensagem: "Animal não encontrado!"
                 });

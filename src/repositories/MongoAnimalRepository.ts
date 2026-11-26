@@ -1,29 +1,28 @@
 import Animal from "../models/Animal.js";
-import type { AnimalRepository, AnimalDTO, FiltroAnimalDTO, cadastrar } from "./AnimalRepository.js";
+import type { AnimalRepository, AnimalDTO, FiltroAnimalDTO } from "../repositories/AnimalRepository.js";
+
 
 export class MongoAnimalRepository implements AnimalRepository{
-    static async listar(){
+     async listar(): Promise<any>{
         return await Animal.find({});
         
     }
 
-    static async buscarPorId(id: string){
+     async buscarPorId(id: string): Promise<any>{
       return await Animal.findById(id);
     }
 
-    static async buscarPorFiltro(filtros: FiltroAnimalDTO){
+    async buscarPorFiltro(filtros: FiltroAnimalDTO): Promise<any>{
          const filtro: Record<string, any> = {};
 
-         if (filtros.raca) filtro.raca = filtros.raca;
+        if (filtros.raca) filtro.raca = filtros.raca;
         if (filtros.especie) filtro.especie = filtros.especie;
         if (filtros.porte) filtro.porte = { $regex: filtros.porte, $options: "i"};
-        
-       
         if (filtros.esquemaVacinal) filtro.esquemaVacinal = { $regex: filtros.esquemaVacinal, $options: "i"};
 
          return await Animal.find(filtro);
     }
-
+ 
     async cadastrar (dados: AnimalDTO){
         return await Animal.create({
         nome: dados.nome,
