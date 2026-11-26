@@ -48,6 +48,14 @@ export class MongoAnimalRepository implements AnimalRepository{
         
     }
 
+    async atualizarParcial(id: string, dados: Partial<AnimalDTO>){
+        return await Animal.findByIdAndUpdate(
+            id,
+            {$set: dados},
+            {new: true}
+        )
+    }
+
     async deletar (id: string){
         const AnimalDeletado = await Animal.findByIdAndDelete(id);
         return Boolean(AnimalDeletado);

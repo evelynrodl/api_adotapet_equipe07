@@ -20,12 +20,12 @@ export interface FiltroAnimalDTO{
 }
 
 export interface AnimalRepository{
-    listar(): Promise<any[]>;
-    buscarPorId(id: string): Promise<any[] | null>;
-    buscarPorFiltro(filtros: FiltroAnimalDTO): Promise<any[]>;
-    cadastrar(dados: AnimalDTO): Promise<any[]>;
-    atualizar(id: string, dados: AnimalDTO): Promise<any[]>;
-    atualizarParcial(id: string, dados:Partial<AnimalDTO>): Promise<any[] | null>;
+    listar(): Promise<AnimalDTO[]>;
+    buscarPorId(id: string): Promise<AnimalDTO[] | null>;
+    buscarPorFiltro(filtros: FiltroAnimalDTO): Promise<AnimalDTO[]>;
+    cadastrar(dados: AnimalDTO): Promise<AnimalDTO>;
+    atualizar(id: string, dados: AnimalDTO): Promise<AnimalDTO>;
+    atualizarParcial(id: string, dados:Partial<AnimalDTO>): Promise<AnimalDTO | null>;
     deletar(id: string): Promise<boolean>;
 
 }
